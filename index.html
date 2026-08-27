@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>あなたにぴったりのかき氷、診断します。 | SHAVE ICE MAGAZINE</title>
+    
+    <!-- Google Fonts 読み込み（preconnect ＋ 各ウェイトを完全カバー） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@700;900&family=Shippori+Mincho:wght@700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        popeye: {
+                            yellow: '#FFE600',
+                            black: '#111111',
+                            gray: '#F4F4F0',
+                            darkgray: '#333333'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif JP"', 'serif'],
+                        sans: ['"Noto Sans JP"', 'sans-serif'],
+                        en: ['Cinzel', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #FFFFFF;
+            color: #111111;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .font-serif {
+            font-family: 'Noto Serif JP', serif !important;
+        }
+
+        .font-en-title {
+            font-family: 'Cinzel', serif !important;
+            letter-spacing: 0.1em;
+        }
+
+        .border-popeye {
+            border: 3px solid #111111;
+        }
+
+        .shadow-popeye {
+            box-shadow: 6px 6px 0px #111111;
+        }
+
+        .shadow-popeye-sm {
+            box-shadow: 3px 3px 0px #111111;
+        }
+
+        .btn-popeye {
+            background-color: #FFE600;
+            color: #111111;
+            border: 3px solid #111111;
+            box-shadow: 4px 4px 0px #111111;
+            font-weight: 900;
+            transition: all 0.15s ease-in-out;
+        }
+
+        .btn-popeye:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #111111;
+        }
+
+        .btn-popeye:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #111111;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .sticker-badge {
+            background-color: #111111;
+            color: #FFE600;
+            font-weight: 900;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col justify-between selection:bg-popeye-yellow">
+
+    <!-- Header Block -->
+    <header class="sticky top-0 z-40 bg-white border-b-4 border-popeye-black px-4 sm:px-8 py-3 flex justify-between items-center">
+        <div class="flex items-center cursor-pointer" onclick="resetToTop()">
+            <span class="bg-black text-white text-xs sm:text-sm font-black px-2.5 py-1 tracking-wider">SHAVE ICE MAGAZINE</span>
+        </div>
+        <div class="flex items-center space-x-3">
+            <span class="bg-popeye-yellow text-popeye-black text-xs font-black px-2.5 py-1 border-2 border-popeye-black shadow-popeye-sm">ISSUE #08</span>
+            <span class="hidden sm:inline font-en-title text-xs font-black text-gray-500 tracking-widest">SUMMER SPECIAL FEATURE</span>
+        </div>
+    </header>
+
+    <div id="toast-msg" class="fixed top-16 left-1/2 transform -translate-x-1/2 z-50 bg-popeye-black text-popeye-yellow border-2 border-popeye-yellow px-6 py-3 font-bold text-xs shadow-popeye hidden transition-all">
+        コピーしました！
+    </div>
+
+    <main id="app" class="py-6 sm:py-10 flex-grow flex flex-col justify-center max-w-7xl mx-auto w-full px-4 sm:px-6">
+
+        <section id="sec-top" class="fade-in w-full space-y-6">
+            <!-- Main Hero Title -->
+            <div class="border-b-4 border-popeye-black pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <p class="font-en-title text-xs sm:text-sm font-black tracking-widest text-gray-500 mb-1">CITY GUIDE FOR ICE LOVERS</p>
+                    <h1 class="font-sans font-black text-3xl sm:text-5xl lg:text-6xl text-popeye-black tracking-tight">
+                        大人を魅了する最高の一杯。
+                    </h1>
+                </div>
+                <div class="self-start md:self-end">
+                    <span class="bg-popeye-yellow font-bold text-xs sm:text-sm px-3 py-1 border-2 border-popeye-black shadow-popeye-sm inline-block">
+                        直感で答える6つのクエスチョン。
+                    </span>
+                </div>
+            </div>
+
+            <!-- Main Feature Cards -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch pt-2">
+                <!-- Left Feature Image Card -->
+                <div class="lg:col-span-7 border-popeye shadow-popeye bg-white flex flex-col justify-between p-2 relative">
+                    <div class="absolute top-5 left-5 z-10 bg-popeye-yellow border-2 border-popeye-black text-popeye-black font-black text-xs px-3 py-1 shadow-popeye-sm">
+                        FEATURED ICE 2026
+                    </div>
+                    <div class="w-full h-[320px] sm:h-[420px] overflow-hidden bg-popeye-gray border-2 border-popeye-black relative">
+                        <img id="img-top-preview" src="" alt="メインビジュアル" class="w-full h-full object-cover">
+                    </div>
+                    <div class="bg-popeye-black text-white p-3.5 mt-2 flex justify-between items-center text-xs font-bold gap-2">
+                        <span class="text-sm sm:text-base font-black tracking-tight">「2,000円超えのかき氷って何が違うの？」</span>
+                        <span class="font-en-title text-popeye-yellow text-xs sm:text-sm whitespace-nowrap">SHAVE ICE SPECIAL</span>
+                    </div>
+                </div>
+
+                <!-- Right Diagnosis Card -->
+                <div class="lg:col-span-5 border-popeye shadow-popeye bg-white p-6 sm:p-8 flex flex-col justify-between space-y-6">
+                    <div class="space-y-4">
+                        <div>
+                            <span class="bg-popeye-black text-white font-en-title font-black text-xs px-3 py-1">DIAGNOSIS TEST</span>
+                        </div>
+                        <h2 class="font-sans font-black text-2xl sm:text-3xl text-popeye-black leading-tight">
+                            あなたにぴったりの<br/>
+                            <mark class="bg-popeye-yellow px-1 my-1 inline-block text-popeye-black">かき氷、診断します。</mark>
+                        </h2>
+                        <p class="text-xs sm:text-sm font-bold text-gray-600 leading-relaxed pt-2">
+                            今宵食べるべき一皿はどれだ？<br/>
+                            6つのシンプルな二択に直感で答えるだけで、あなたの隠れた食の好属性とおすすめの専門店を徹底解剖。
+                        </p>
+                    </div>
+
+                    <div class="space-y-4 border-t-2 border-dashed border-gray-300 pt-4">
+                        <p class="text-xs font-black text-popeye-black flex items-center space-x-2">
+                            <span class="inline-block w-2 h-2 bg-popeye-black"></span>
+                            <span>所要時間：たったの30秒</span>
+                        </p>
+                        <button onclick="startQuiz()" class="btn-popeye w-full py-4 text-base sm:text-lg flex items-center justify-center space-x-2">
+                            <span>診断をスタートする</span>
+                            <span class="text-xl">→</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-quiz" class="hidden fade-in max-w-4xl mx-auto w-full space-y-6">
+            <div class="bg-white border-popeye shadow-popeye p-6 sm:p-10 space-y-8">
+                <!-- Progress Header -->
+                <div class="border-popeye p-4 bg-white flex flex-col space-y-3">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-popeye-black text-white font-en-title font-black text-xs px-3 py-1">QUESTION</span>
+                            <span id="quiz-step-text" class="font-sans font-black text-2xl text-popeye-black">Q1 / 06</span>
+                        </div>
+                        <button id="btn-prev" onclick="prevQuestion()" class="hidden text-xs font-bold text-popeye-black bg-popeye-gray hover:bg-gray-200 px-3 py-1.5 border-2 border-popeye-black">
+                            ← 前の質問に戻る
+                        </button>
+                    </div>
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-popeye-gray border-2 border-popeye-black h-3 p-0.5">
+                        <div id="quiz-progress" class="bg-popeye-yellow border border-popeye-black h-full w-1/6 transition-all duration-300"></div>
+                    </div>
+                </div>
+
+                <!-- Question Title & Options -->
+                <div class="space-y-6 border-popeye p-6 sm:p-8 bg-white relative">
+                    <p class="font-en-title text-xs font-black text-gray-400 tracking-widest">SELECT YOUR PREFERENCE</p>
+                    <h2 id="question-title" class="font-sans font-black text-2xl sm:text-3xl text-popeye-black leading-snug pb-4 border-b-2 border-gray-200"></h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                        <button id="opt-a" onclick="selectOption('A')" class="text-left p-6 bg-white hover:bg-popeye-gray border-popeye shadow-popeye-sm hover:shadow-popeye transition-all duration-150 flex flex-col justify-between space-y-6 group relative">
+                            <div class="flex justify-between items-start w-full">
+                                <span class="bg-popeye-black text-white font-en-title font-black text-xs px-2.5 py-1">OPTION A</span>
+                                <span class="w-6 h-6 rounded-full border-2 border-popeye-black inline-block group-hover:bg-popeye-yellow"></span>
+                            </div>
+                            <span id="opt-a-text" class="font-sans font-black text-base sm:text-lg text-popeye-black leading-snug"></span>
+                        </button>
+
+                        <button id="opt-b" onclick="selectOption('B')" class="text-left p-6 bg-white hover:bg-popeye-gray border-popeye shadow-popeye-sm hover:shadow-popeye transition-all duration-150 flex flex-col justify-between space-y-6 group relative">
+                            <div class="flex justify-between items-start w-full">
+                                <span class="bg-popeye-yellow text-popeye-black font-en-title font-black text-xs px-2.5 py-1 border border-popeye-black">OPTION B</span>
+                                <span class="w-6 h-6 rounded-full border-2 border-popeye-black inline-block group-hover:bg-popeye-yellow"></span>
+                            </div>
+                            <span id="opt-b-text" class="font-sans font-black text-base sm:text-lg text-popeye-black leading-snug"></span>
+                        </button>
+                    </div>
+
+                    <p class="text-center text-xs font-bold text-gray-400 pt-4">※直感で惹かれる方を素早く選択してください。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Result Section -->
+        <section id="sec-result" class="hidden fade-in max-w-4xl mx-auto px-4 sm:px-6 w-full space-y-12">
+            <article id="result-container" class="bg-white border-popeye shadow-popeye overflow-hidden relative">
+                
+                <div class="p-8 sm:p-12 border-b-4 border-popeye-black text-center space-y-4 bg-popeye-gray relative">
+                    <span class="font-en-title font-black text-xs tracking-widest bg-popeye-black text-white px-3 py-1 uppercase">
+                        DIAGNOSIS RESULT
+                    </span>
+                    <p class="font-bold text-xs sm:text-sm text-gray-500 tracking-wider">あなたにおすすめのかき氷タイプ</p>
+                    <h1 id="res-type-name" class="font-serif font-black text-3xl sm:text-5xl text-popeye-black tracking-wide"></h1>
+                    <p id="res-catchphrase" class="font-bold text-base sm:text-xl text-popeye-black bg-popeye-yellow px-4 py-1.5 inline-block border-2 border-popeye-black shadow-popeye-sm"></p>
+                </div>
+
+                <div class="p-6 sm:p-12 space-y-10">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+                        <div class="md:col-span-7 space-y-3">
+                            <h3 class="font-en-title font-black text-xs text-gray-400 tracking-widest">ABOUT THIS TYPE</h3>
+                            <p id="res-description" class="text-popeye-black font-bold leading-relaxed text-sm sm:text-base whitespace-pre-line"></p>
+                        </div>
+                        <div class="md:col-span-5 bg-popeye-gray p-5 border-popeye space-y-3">
+                            <h4 class="font-bold text-sm text-popeye-black border-b-2 border-popeye-black pb-1">こんなかき氷がおすすめ</h4>
+                            <ul id="res-recommended-list" class="text-xs sm:text-sm font-bold text-popeye-darkgray space-y-2 list-disc list-inside"></ul>
+                        </div>
+                    </div>
+
+                    <div class="pt-8 border-t-4 border-popeye-black space-y-6">
+                        <div>
+                            <span class="font-en-title font-black text-xs text-white bg-popeye-black px-2 py-0.5">YOUR RECOMMENDED SHOP</span>
+                            <h3 id="res-shop-name" class="font-serif font-black text-2xl sm:text-4xl text-popeye-black mt-2"></h3>
+                        </div>
+
+                        <div class="w-full h-[300px] sm:h-[420px] border-popeye overflow-hidden bg-popeye-gray relative">
+                            <img id="res-shop-img" src="" alt="おすすめ店舗写真" class="w-full h-full object-cover">
+                        </div>
+
+                        <div class="bg-popeye-yellow p-6 border-popeye shadow-popeye-sm space-y-2">
+                            <span class="font-en-title font-black text-xs text-popeye-black border-b-2 border-popeye-black pb-0.5">MUST TRY</span>
+                            <p id="res-first-choice" class="font-serif font-black text-lg sm:text-xl text-popeye-black pt-1"></p>
+                            <p id="res-shop-reason" class="text-xs sm:text-sm font-bold text-popeye-black leading-relaxed pt-1"></p>
+                        </div>
+                    </div>
+
+                    <div id="res-second-container" class="pt-4 border-t-2 border-dashed border-gray-300 flex items-center justify-between text-xs sm:text-sm font-bold">
+                        <span class="text-gray-500">2番目に近いタイプ：</span>
+                        <span id="res-second-type" class="bg-popeye-gray border-2 border-popeye-black px-3 py-1"></span>
+                    </div>
+
+                    <div class="pt-8 border-t-4 border-popeye-black space-y-4 text-center">
+                        <p class="font-serif font-black text-sm sm:text-base text-popeye-black">＼ 診断結果をシェアして話題にしよう ／</p>
+                        <div class="flex flex-wrap items-center justify-center gap-3">
+                            <button onclick="shareToX()" class="bg-black text-white px-5 py-2.5 border-2 border-popeye-black font-bold text-xs flex items-center space-x-2 hover:bg-gray-800 shadow-popeye-sm">
+                                <span>𝕏 でシェア</span>
+                            </button>
+                            <button onclick="shareToLine()" class="bg-[#00B900] text-white px-5 py-2.5 border-2 border-popeye-black font-bold text-xs flex items-center space-x-2 hover:bg-[#009900] shadow-popeye-sm">
+                                <span>LINEで送る</span>
+                            </button>
+                            <button onclick="copyCurrentUrl()" class="bg-popeye-yellow text-popeye-black px-5 py-2.5 border-2 border-popeye-black font-bold text-xs flex items-center space-x-2 hover:bg-yellow-300 shadow-popeye-sm">
+                                <span>📋 テキストをコピー</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <section class="bg-white border-popeye shadow-popeye p-6 sm:p-12 space-y-8">
+                <div class="border-b-4 border-popeye-black pb-4 space-y-1">
+                    <span class="font-en-title font-black text-xs bg-popeye-yellow text-popeye-black px-2 py-0.5 border border-popeye-black">FOR EVERYONE</span>
+                    <h3 class="font-serif font-black text-2xl sm:text-3xl text-popeye-black pt-1">みんなにおすすめ</h3>
+                    <p class="font-bold text-sm text-gray-500">はじめての2,000円超えかき氷なら？</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-7">
+                        <div class="w-full h-[260px] sm:h-[340px] border-popeye overflow-hidden bg-popeye-gray">
+                            <img id="img-everyone-preview" src="" alt="オクノシブヤ" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <div class="lg:col-span-5 space-y-4">
+                        <div>
+                            <span class="font-en-title font-black text-xs text-gray-400">EDITOR'S CHOICE</span>
+                            <h4 class="font-serif font-black text-3xl text-popeye-black">オクノシブヤ</h4>
+                        </div>
+                        <p class="font-serif font-black text-lg text-popeye-black bg-popeye-yellow p-3 border-2 border-popeye-black">
+                            「かき氷って、こんなに自由なんだ。」
+                        </p>
+                        <p class="text-xs sm:text-sm font-bold text-popeye-darkgray leading-relaxed">
+                            診断結果に関係なく、今どきのかき氷を一度体験してみたい人におすすめ。進化系高級かき氷の到達点とも言える、驚きと感動が詰まったひと皿に出会えます。
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="text-center pt-4">
+                <button onclick="resetToTop()" class="btn-popeye px-10 py-4 text-base">
+                    ↻ もう一度診断する
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-popeye-black text-white border-t-4 border-popeye-black py-8 px-4 text-center text-xs font-black font-en-title tracking-widest space-y-2">
+        <div>SHAVE ICE MAGAZINE SPECIAL ISSUE</div>
+        <div class="text-gray-500 text-[10px]">ALL RIGHTS RESERVED.</div>
+    </footer>
+
+    <button onclick="openImgManager()" class="fixed bottom-6 right-6 z-50 bg-popeye-black text-popeye-yellow border-2 border-popeye-yellow shadow-popeye px-4 py-3 rounded-none font-bold text-xs flex items-center space-x-2 hover:bg-popeye-darkgray">
+        <span>🖼 画像管理</span>
+    </button>
+
+    <div id="img-modal" class="fixed inset-0 z-50 bg-black/70 hidden flex items-center justify-center p-4">
+        <div class="bg-white border-popeye shadow-popeye max-w-xl w-full max-h-[85vh] overflow-y-auto p-6 space-y-6">
+            <div class="flex justify-between items-center border-b-4 border-popeye-black pb-3">
+                <h3 class="font-serif font-black text-lg">店舗画像管理（ブラウザ自動保存）</h3>
+                <button onclick="closeImgManager()" class="font-black text-xl">✕</button>
+            </div>
+
+            <p class="text-xs font-bold text-gray-500 leading-relaxed">
+                各店舗のお写真をセットできます。ローカル保存されるため、再読み込みしても保持されます。
+            </p>
+
+            <div class="space-y-3 text-xs font-bold">
+                <div class="p-3 border-2 border-popeye-black bg-popeye-gray flex justify-between items-center">
+                    <span>TOP メインビジュアル</span>
+                    <input type="file" accept="image/*" onchange="uploadImage(event, 'top')" class="max-w-[180px]">
+                </div>
+                <div class="p-3 border-2 border-popeye-black flex justify-between items-center">
+                    <span>① Tokyo Shave Ice アンカードレ</span>
+                    <input type="file" accept="image/*" onchange="uploadImage(event, 'shop1')" class="max-w-[180px]">
+                </div>
+                <div class="p-3 border-2 border-popeye-black flex justify-between items-center">
+                    <span>② 6.17 ロクイチナナ</span>
+                    <input type="file" accept="image/*" onchange="uploadImage(event, 'shop2')" class="max-w-[180px]">
+                </div>
+                <div class="p-3 border-2 border-popeye-black flex justify-between items-center">
+                    <span>③ 目白 志むら</span>
+                    <input type="file" accept="image/*" onchange="uploadImage(event, 'shop3')" class="max-w-[180px]">
+                </div>
+                <div class="p-3 border-2 border-popeye-black flex justify-between items-center">
+                    <span>④ nice and warm</span>
+                    <input type="file" accept="image/*" onchange="uploadImage(event, 'shop4')" class="max-w-[180px]">
+                </div>
+                <div class="p-3 border-2 border-popeye-black flex justify-between items-center">
+                    <span>⑤ かき氷 フウリン堂</span>
+                    <input type="file" accept="image/*" onchange="uploadImage(event, 'shop5')" class="max-w-[180px]">
+                </div>
+                <div class="p-3 border-2 border-popeye-black bg-popeye-yellow flex justify-between items-center">
+                    <span>⑥ オクノシブヤ（みんなにおすすめ）</span>
+                    <input type="file" accept="image/*" onchange="uploadImage(event, 'shop6')" class="max-w-[180px]">
+                </div>
+            </div>
+
+            <div class="text-right pt-2 border-t border-gray-200">
+                <button onclick="closeImgManager()" class="btn-popeye px-6 py-2 text-xs">保存して閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generatePlaceholder(title) {
+            var canvas = document.createElement('canvas');
+            canvas.width = 800;
+            canvas.height = 600;
+            var ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = "#F4F4F0";
+            ctx.fillRect(0, 0, 800, 600);
+
+            ctx.strokeStyle = "#111111";
+            ctx.lineWidth = 6;
+            ctx.strokeRect(20, 20, 760, 560);
+
+            ctx.fillStyle = "#FFE600";
+            ctx.beginPath();
+            ctx.arc(400, 280, 80, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = "#111111";
+            ctx.font = "bold 32px 'Noto Serif JP', serif";
+            ctx.textAlign = "center";
+            ctx.fillText(title, 400, 440);
+
+            ctx.font = "bold 16px sans-serif";
+            ctx.fillStyle = "#666666";
+            ctx.fillText("右下の「画像管理」からお写真をセットできます", 400, 480);
+
+            return canvas.toDataURL("image/png");
+        }
+
+        window.images = {
+            top: generatePlaceholder('あなたにぴったりのかき氷'),
+            shop1: generatePlaceholder('Tokyo Shave Ice アンカードレ'),
+            shop2: generatePlaceholder('6.17 ロクイチナナ'),
+            shop3: generatePlaceholder('目白 志むら'),
+            shop4: generatePlaceholder('nice and warm'),
+            shop5: generatePlaceholder('かき氷 フウリン堂'),
+            shop6: generatePlaceholder('オクノシブヤ')
+        };
+
+        var DB_NAME = 'ShaveIceMagDB';
+        var DB_VERSION = 1;
+        var STORE_NAME = 'imagesStore';
+
+        function openDB() {
+            return new Promise(function(resolve, reject) {
+                var request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onupgradeneeded = function(e) {
+                    var db = e.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME);
+                    }
+                };
+                request.onsuccess = function(e) { resolve(e.target.result); };
+                request.onerror = function(e) { reject(e.target.error); };
+            });
+        }
+
+        function saveImageToDB(key, dataUrl) {
+            openDB().then(function(db) {
+                var tx = db.transaction(STORE_NAME, 'readwrite');
+                tx.objectStore(STORE_NAME).put(dataUrl, key);
+            }).catch(function(err) {
+                console.log('IndexedDB Note:', err);
+            });
+        }
+
+        function loadImagesFromDB() {
+            openDB().then(function(db) {
+                var tx = db.transaction(STORE_NAME, 'readonly');
+                var store = tx.objectStore(STORE_NAME);
+                var keys = ['top', 'shop1', 'shop2', 'shop3', 'shop4', 'shop5', 'shop6'];
+                
+                keys.forEach(function(key) {
+                    var req = store.get(key);
+                    req.onsuccess = function() {
+                        if (req.result) {
+                            window.images[key] = req.result;
+                            window.updateImagesInDOM();
+                        }
+                    };
+                });
+            }).catch(function(err) {
+                console.log('IndexedDB load note:', err);
+            });
+        }
+
+        function getCleanShareUrl() {
+            try {
+                var url = window.location.href;
+                if (!url || url.indexOf('blob:') === 0 || url.indexOf('about:') === 0 || url.indexOf('usercontent.goog') !== -1 || url.indexOf('file:') === 0) {
+                    return '';
+                }
+                return url;
+            } catch (e) {
+                return '';
+            }
+        }
+
+        function showToast(msg) {
+            var toast = document.getElementById('toast-msg');
+            toast.innerText = msg || 'コピーしました！';
+            toast.classList.remove('hidden');
+            setTimeout(function() {
+                toast.classList.add('hidden');
+            }, 2500);
+        }
+
+        function copyCurrentUrl() {
+            var cleanUrl = getCleanShareUrl();
+            var textToCopy = cleanUrl;
+            
+            if (!textToCopy) {
+                try {
+                    var res = determineResult();
+                    var typeName = typesMeta[res.winnerType] ? typesMeta[res.winnerType].name : '';
+                    if (typeName) {
+                        textToCopy = "【かき氷診断】私にぴったりのかき氷は『" + typeName + "』でした！🍧✨";
+                    } else {
+                        textToCopy = "【かき氷診断】あなたにぴったりのかき氷、診断します。🍧";
+                    }
+                } catch(e) {
+                    textToCopy = "【かき氷診断】あなたにぴったりのかき氷、診断します。🍧";
+                }
+            }
+
+            var textArea = document.createElement("textarea");
+            textArea.value = textToCopy;
+            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast('コピーしました！');
+            } catch (err) {
+                showToast('コピーできませんでした');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function shareTopUrl() {
+            copyCurrentUrl();
+        }
+
+        function shareToX() {
+            var res = determineResult();
+            var typeName = typesMeta[res.winnerType] ? typesMeta[res.winnerType].name : 'かき氷';
+            var cleanUrl = getCleanShareUrl();
+            var text = encodeURIComponent("【かき氷診断】私にぴったりのかき氷は『" + typeName + "』でした！🍧✨ #かき氷診断 #Webマガジン");
+            var intentUrl = "https://twitter.com/intent/tweet?text=" + text;
+            if (cleanUrl) {
+                intentUrl += "&url=" + encodeURIComponent(cleanUrl);
+            }
+            window.open(intentUrl, '_blank');
+        }
+
+        function shareToLine() {
+            var res = determineResult();
+            var typeName = typesMeta[res.winnerType] ? typesMeta[res.winnerType].name : 'かき氷';
+            var cleanUrl = getCleanShareUrl();
+            var shareText = "私にぴったりのかき氷診断結果は【" + typeName + "】でした！🍧";
+            if (cleanUrl) {
+                shareText += "\n" + cleanUrl;
+            }
+            var intentUrl = "https://social-plugins.line.me/lineit/share?url=" + encodeURIComponent(shareText);
+            window.open(intentUrl, '_blank');
+        }
+
+        var questions = [
+            { id: 1, title: "Q1｜普段アイスを選ぶならどっち派？", optA: { text: "サッパリ食べられる氷菓系（ガリガリ君など）" }, optB: { text: "濃厚でリッチなアイスクリーム（ハーゲンダッツなど）" } },
+            { id: 2, title: "Q2｜好きなスイーツのスタイルは？", optA: { text: "抹茶・苺大福など、情緒溢れる和スイーツ" }, optB: { text: "モンブラン・ティラミスなど、華やかな洋スイーツ" } },
+            { id: 3, title: "Q3｜コンビニでつい手が伸びるのは？", optA: { text: "ワクワク感のある季節限定・新商品" }, optB: { text: "間違いない絶対的な定番のお気に入り" } },
+            { id: 4, title: "Q4｜ちょっと贅沢なグルメを楽しむなら？", optA: { text: "厳選された高級素材そのものをたっぷり味わいたい" }, optB: { text: "シェフの技と工夫が詰まった特別な一皿を食べたい" } },
+            { id: 5, title: "Q5｜かき氷に対する期待は？", optA: { text: "「これってかき氷！？」と驚きと概念を覆してほしい" }, optB: { text: "王道のおいしさと氷本来の良さを守ってほしい" } },
+            { id: 6, title: "Q6｜極上の桃があります。どちらで食べたい？", optA: { text: "フレッシュな果汁そのまま丸かじり！" }, optB: { text: "ひと手間加えて仕立てた上品なデザートとして" } }
+        ];
+
+        var typesMeta = {
+            1: {
+                name: "ご褒美フルーツ系",
+                catchphrase: "「果物が主役。今日は、ちょっと贅沢に。」",
+                description: "旬の果物や、素材そのもののおいしさをたっぷり味わいたいあなた。\nせっかく食べるなら、いい素材を思いっきり楽しみたいタイプです。",
+                recommendations: ["旬のフルーツが主役", "果肉・果実ソースたっぷり", "チーズや蜂蜜など、フルーツの魅力を引き出す素材"],
+                shopName: "Tokyo Shave Ice アンカードレ",
+                shopKey: "shop1",
+                firstChoice: "「フルーツを食べるためのかき氷」を探してみて。",
+                shopReason: "旬の高級フルーツを贅沢に使用し、果実のフレッシュなおいしさを極限まで高めた絶品かき氷。"
+            },
+            2: {
+                name: "定番かき氷系",
+                catchphrase: "「結局、シンプルがいちばんおいしい。」",
+                description: "あれこれ盛り込むより、氷と蜜のおいしさをまっすぐ楽しみたいあなた。\n\n『2,000円のかき氷って、何が違うの？』と思っている人にも、ぜひ体験してほしいタイプです。",
+                recommendations: ["果実蜜", "シンプルなフルーツ系", "氷とシロップの組み合わせを楽しめるもの"],
+                shopName: "6.17 ロクイチナナ",
+                shopKey: "shop2",
+                firstChoice: "「シンプルだからこそ、氷と蜜の違いを味わって。」",
+                shopReason: "削りの丁寧さとシロップの純度が際立つ一品。洗練された氷のくちどけを楽しめます。"
+            },
+            3: {
+                name: "和素材系",
+                catchphrase: "「ほっとするのに、ちゃんと特別。」",
+                description: "抹茶、あんこ、きなこ、黒蜜……\n日本らしい甘さに弱いあなた。\n\n奇抜さよりも、『これ絶対おいしいよね』という安心感に惹かれるタイプです。",
+                recommendations: ["抹茶・ほうじ茶", "あんこ・黒蜜・きなこ", "白玉・わらび餅などの和素材"],
+                shopName: "目白 志むら",
+                shopKey: "shop3",
+                firstChoice: "「和菓子好き、かき氷でもやっぱり和。」",
+                shopReason: "老舗和菓子店ならではの上質な和素材を贅沢に使用。絶妙なあんこの甘みと濃密な抹茶が魅力的です。"
+            },
+            4: {
+                name: "パティスリー系",
+                catchphrase: "「これはもう、ケーキです。……いや、かき氷です。」",
+                description: "クリーム、ソース、クランブル、ムース……\nひと皿の中に、いろんな味や食感があるものが好きなあなた。\n\n桃はそのまま食べるより、桃のショートケーキにしたくなるタイプ。",
+                recommendations: ["カスタード・生クリーム", "クランブル・焼き菓子", "ケーキを思わせる構成", "フルーツ＋クリームの組み合わせ"],
+                shopName: "nice and warm",
+                shopKey: "shop4",
+                firstChoice: "「スプーンで食べる、氷のパティスリー。」",
+                shopReason: "洋菓子を手がける店主が作る、レイヤー構造の美しさと濃厚なエスプーマクリームが織りなす極上体験。"
+            },
+            5: {
+                name: "新発見系",
+                catchphrase: "「え、これ……かき氷なの？」",
+                description: "『とりあえず食べてみたい！』\n『その組み合わせ、気になる！』\n\nそんな未知のものへの好奇心が強いあなた。\n\nかき氷を『甘いデザート』という枠に閉じ込めたくないタイプです。",
+                recommendations: ["野菜・ハーブ", "チーズ・発酵素材", "甘くない素材", "想像したことのない組み合わせ"],
+                shopName: "かき氷 フウリン堂",
+                shopKey: "shop5",
+                firstChoice: "「おいしいのか、想像できない。だから食べたい。」",
+                shopReason: "独創的なフレーバー構成と、一口食べた瞬間に脳内がアップデートされる驚きの味覚設計。"
+            }
+        };
+
+        var currentStep = 0;
+        var userAnswers = [null, null, null, null, null, null];
+
+        function calculateScores(answers) {
+            var scores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+            if (answers[0] === 'A') scores[2] += 3;
+            if (answers[0] === 'B') scores[1] += 3;
+            if (answers[1] === 'A') scores[3] += 4;
+            if (answers[1] === 'B') scores[4] += 3;
+            if (answers[2] === 'A') scores[5] += 3;
+            if (answers[2] === 'B') { scores[2] += 3; scores[3] += 1; }
+            if (answers[3] === 'A') scores[1] += 3;
+            if (answers[3] === 'B') scores[4] += 3;
+            if (answers[4] === 'A') scores[5] += 4;
+            if (answers[4] === 'B') { scores[2] += 3; scores[3] += 3; }
+            if (answers[5] === 'A') scores[1] += 3;
+            if (answers[5] === 'B') scores[4] += 3;
+            return scores;
+        }
+
+        function breakTie(typeA, typeB, answers) {
+            if (answers[1] === 'A' && typeA === 3) return typeA;
+            if (answers[1] === 'A' && typeB === 3) return typeB;
+            if (answers[1] === 'B' && typeA === 4) return typeA;
+            if (answers[1] === 'B' && typeB === 4) return typeB;
+            if (answers[4] === 'A' && typeA === 5) return typeA;
+            if (answers[4] === 'A' && typeB === 5) return typeB;
+            return typeA < typeB ? typeA : typeB;
+        }
+
+        function determineResult() {
+            var scores = calculateScores(userAnswers);
+            var typeIds = [1, 2, 3, 4, 5];
+            typeIds.sort(function(a, b) {
+                if (scores[b] !== scores[a]) return scores[b] - scores[a];
+                return breakTie(a, b, userAnswers) === a ? -1 : 1;
+            });
+            return { winnerType: typeIds[0], runnerUpType: typeIds[1] };
+        }
+
+        window.updateImagesInDOM = function() {
+            var topEl = document.getElementById('img-top-preview');
+            var everyoneEl = document.getElementById('img-everyone-preview');
+            if (topEl) topEl.src = window.images.top;
+            if (everyoneEl) everyoneEl.src = window.images.shop6;
+
+            if (!document.getElementById('sec-result').classList.contains('hidden')) {
+                var res = determineResult();
+                var shopImgEl = document.getElementById('res-shop-img');
+                if (shopImgEl) shopImgEl.src = window.images[typesMeta[res.winnerType].shopKey];
+            }
+        };
+
+        function resetToTop() {
+            currentStep = 0;
+            userAnswers = [null, null, null, null, null, null];
+            document.getElementById('sec-top').classList.remove('hidden');
+            document.getElementById('sec-quiz').classList.add('hidden');
+            document.getElementById('sec-result').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function startQuiz() {
+            currentStep = 0;
+            document.getElementById('sec-top').classList.add('hidden');
+            document.getElementById('sec-result').classList.add('hidden');
+            document.getElementById('sec-quiz').classList.remove('hidden');
+            renderQuestion();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            var q = questions[currentStep];
+            document.getElementById('quiz-step-text').innerText = "Q" + (currentStep + 1) + " / 6";
+            document.getElementById('quiz-progress').style.width = (((currentStep + 1) / 6) * 100) + "%";
+            document.getElementById('question-title').innerText = q.title;
+            document.getElementById('opt-a-text').innerText = q.optA.text;
+            document.getElementById('opt-b-text').innerText = q.optB.text;
+            if (currentStep > 0) {
+                document.getElementById('btn-prev').classList.remove('hidden');
+            } else {
+                document.getElementById('btn-prev').classList.add('hidden');
+            }
+        }
+
+        function selectOption(choice) {
+            userAnswers[currentStep] = choice;
+            if (currentStep < 5) {
+                currentStep++;
+                renderQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentStep > 0) {
+                currentStep--;
+                renderQuestion();
+            }
+        }
+
+        function showResult() {
+            var res = determineResult();
+            var meta = typesMeta[res.winnerType];
+            var runnerMeta = typesMeta[res.runnerUpType];
+
+            document.getElementById('res-type-name').innerText = meta.name;
+            document.getElementById('res-catchphrase').innerText = meta.catchphrase;
+            document.getElementById('res-description').innerText = meta.description;
+            
+            var listHtml = "";
+            meta.recommendations.forEach(function(item) {
+                listHtml += "<li>" + item + "</li>";
+            });
+            document.getElementById('res-recommended-list').innerHTML = listHtml;
+
+            document.getElementById('res-shop-name').innerText = meta.shopName;
+            document.getElementById('res-shop-img').src = window.images[meta.shopKey];
+            document.getElementById('res-first-choice').innerText = meta.firstChoice;
+            document.getElementById('res-shop-reason').innerText = meta.shopReason;
+            document.getElementById('res-second-type').innerText = runnerMeta.name;
+
+            document.getElementById('sec-quiz').classList.add('hidden');
+            document.getElementById('sec-result').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function openImgManager() { document.getElementById('img-modal').classList.remove('hidden'); }
+        function closeImgManager() { document.getElementById('img-modal').classList.add('hidden'); }
+
+        function uploadImage(event, targetKey) {
+            var file = event.target.files[0];
+            if (!file) return;
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var img = new Image();
+                img.onload = function() {
+                    var canvas = document.createElement('canvas');
+                    var width = img.width;
+                    var height = img.height;
+                    var maxDim = 1000;
+
+                    if (width > height && width > maxDim) {
+                        height = Math.round((height * maxDim) / width);
+                        width = maxDim;
+                    } else if (height > maxDim) {
+                        width = Math.round((width * maxDim) / height);
+                        height = maxDim;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    var compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+                    window.images[targetKey] = compressedBase64;
+                    window.updateImagesInDOM();
+                    saveImageToDB(targetKey, compressedBase64);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        window.onload = function() {
+            loadImagesFromDB();
+            window.updateImagesInDOM();
+        };
+    </script>
+</body>
+</html>
